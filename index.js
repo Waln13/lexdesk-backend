@@ -28,6 +28,16 @@ app.get("/", (req, res) => {
   res.json({ message: "LexDesk API funcionando ✅" });
 });
 
+app.get("/test-db", async (req, res) => {
+  const prisma = require("./src/utils/prisma");
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ message: "BD conectada ✅" });
+  } catch (err) {
+    res.json({ message: "Error BD", error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
