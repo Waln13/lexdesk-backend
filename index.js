@@ -27,35 +27,6 @@ app.get("/", (req, res) => {
   res.json({ message: "LexDesk API funcionando ✅" });
 });
 
-app.get("/test-db", async (req, res) => {
-  const prisma = require("./src/utils/prisma");
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    res.json({ message: "BD conectada ✅" });
-  } catch (err) {
-    res.json({ message: "Error BD", error: err.message });
-  }
-});
-
-app.get("/setup", async (req, res) => {
-  const prisma = require("./src/utils/prisma");
-  const bcrypt = require("bcryptjs");
-  try {
-    const password = await bcrypt.hash("admin123", 10);
-    const usuario = await prisma.usuario.create({
-      data: {
-        nombre: "Administrador",
-        email: "admin@lexdesk.com",
-        password,
-        rol: "DUENO",
-      },
-    });
-    res.json({ message: "Usuario creado", usuario });
-  } catch (err) {
-    res.json({ message: "Error", error: err.message });
-  }
-});
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
