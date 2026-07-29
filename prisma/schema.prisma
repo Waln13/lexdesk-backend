@@ -6,6 +6,81 @@ datasource db {
   provider = "postgresql"
 }
 
+model Usuario {
+  id         Int         @id @default(autoincrement())
+  nombre     String
+  email      String      @unique
+  password   String
+  rol        Rol
+  activo     Boolean     @default(true)
+  creadoEn   DateTime    @default(now())
+  casos      Caso[]      @relation("AbogadoCasos")
+  citas      Cita[]
+  documentos Documento[]
+}
+
+model Cliente {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  telefono  String?
+  email     String?
+  direccion String?
+  creadoEn  DateTime @default(now())
+  casos     Caso[]
+}
+
+model Caso {
+  id               Int         @id @default(autoincrement())
+  titulo           String
+  descripcion      String?
+  tipo             TipoCaso
+  estado           EstadoCaso  @default(NUEVO)
+  area             String?
+  creadoEn         DateTime    @default(now())
+  actualizadoEn    DateTime    @updatedAt
+  clienteId        Int
+  abogadoId        Int?
+  numeroExpediente String?     @unique
+  abogado          Usuario?    @relation("AbogadoCasos", fields: [abogadoId], references: [id])
+  cliente          Cliente     @relation(fields: [clienteId], references: [id])
+  citas            Cita[]
+  documentos       Documento[]
+  mensajes         Mensaje[]
+}
+
+model Cita {
+  id         Int      @id @default(autoincrement())
+  fecha      DateTime
+  motivo     String?
+  completada Boolean  @default(false)
+  creadoEn   DateTime @default(now())
+  casoId     Int
+  abogadoId  Int
+  abogado    Usuario  @relation(fields: [abogadoId], references: [id])
+  caso       Caso     @relation(fields: [casoId], references: [id])
+}
+
+model Documento {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  url         String
+  tipo        String?
+  creadoEn    DateTime @default(now())
+  casoId      Int
+  subidoPorId Int
+  caso        Caso     @relation(fields: [casoId], references: [id])
+  subidoPor   Usuario  @relation(fields: [subidoPorId], references: [id])
+}
+
+model Mensaje {
+  id        Int      @id @default(autoincrement())
+  contenido String
+  de        String
+  creadoEn  DateTime @default(now())
+  casoId    Int
+  caso      Caso     @relation(fields: [casoId], references: [id])
+}
+
 enum Rol {
   DUENO
   SECRETARIA
@@ -22,88 +97,4 @@ enum EstadoCaso {
 enum TipoCaso {
   CONSULTA
   REPRESENTACION
-}
-
-model Usuario {
-  id         Int      @id @default(autoincrement())
-  nombre     String
-  email      String   @unique
-  password   String
-  rol        Rol
-  activo     Boolean  @default(true)
-  creadoEn   DateTime @default(now())
-
-  casos        Caso[]       @relation("AbogadoCasos")
-  citas        Cita[]
-  documentos   Documento[]
-}
-
-model Cliente {
-  id         Int      @id @default(autoincrement())
-  nombre     String
-  telefono   String?
-  email      String?
-  direccion  String?
-  creadoEn   DateTime @default(now())
-
-  casos      Caso[]
-}
-
-model Caso {
-  id          Int        @id @default(autoincrement())
-  titulo      String
-  descripcion String?
-  tipo        TipoCaso
-  estado      EstadoCaso @default(NUEVO)
-  area        String?
-  creadoEn    DateTime   @default(now())
-  actualizadoEn DateTime @updatedAt
-
-  clienteId   Int
-  cliente     Cliente    @relation(fields: [clienteId], references: [id])
-
-  abogadoId   Int?
-  abogado     Usuario?   @relation("AbogadoCasos", fields: [abogadoId], references: [id])
-
-  citas       Cita[]
-  documentos  Documento[]
-  mensajes    Mensaje[]
-}
-
-model Cita {
-  id          Int      @id @default(autoincrement())
-  fecha       DateTime
-  motivo      String?
-  completada  Boolean  @default(false)
-  creadoEn    DateTime @default(now())
-
-  casoId      Int
-  caso        Caso     @relation(fields: [casoId], references: [id])
-
-  abogadoId   Int
-  abogado     Usuario  @relation(fields: [abogadoId], references: [id])
-}
-
-model Documento {
-  id          Int      @id @default(autoincrement())
-  nombre      String
-  url         String
-  tipo        String?
-  creadoEn    DateTime @default(now())
-
-  casoId      Int
-  caso        Caso     @relation(fields: [casoId], references: [id])
-
-  subidoPorId Int
-  subidoPor   Usuario  @relation(fields: [subidoPorId], references: [id])
-}
-
-model Mensaje {
-  id          Int      @id @default(autoincrement())
-  contenido   String
-  de          String
-  creadoEn    DateTime @default(now())
-
-  casoId      Int
-  caso        Caso     @relation(fields: [casoId], references: [id])
 }
