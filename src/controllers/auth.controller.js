@@ -4,6 +4,7 @@ const prisma = require("../utils/prisma");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+  console.log("login attempt:", email);
 
   try {
     const usuario = await prisma.usuario.findUnique({ where: { email } });
@@ -28,6 +29,7 @@ const login = async (req, res) => {
       },
     });
   } catch (err) {
+    console.log("error login:", err.message);
     res.status(500).json({ message: "Error en el servidor", error: err.message });
   }
 };
