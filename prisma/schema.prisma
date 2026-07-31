@@ -26,6 +26,7 @@ model Cliente {
   email     String?
   direccion String?
   creadoEn  DateTime @default(now())
+  cedula    String?  @unique
   casos     Caso[]
 }
 

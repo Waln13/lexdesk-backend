@@ -27,10 +27,10 @@ const getCliente = async (req, res) => {
 };
 
 const crearCliente = async (req, res) => {
-  const { nombre, telefono, email, direccion } = req.body;
+  const { nombre, telefono, email, direccion, cedula } = req.body;
   try {
     const cliente = await prisma.cliente.create({
-      data: { nombre, telefono, email, direccion },
+      data: { nombre, telefono, email, direccion, cedula },
     });
     res.status(201).json(cliente);
   } catch (err) {
@@ -40,11 +40,11 @@ const crearCliente = async (req, res) => {
 
 const actualizarCliente = async (req, res) => {
   const { id } = req.params;
-  const { nombre, telefono, email, direccion } = req.body;
+  const { nombre, telefono, email, direccion, cedula } = req.body;
   try {
     const cliente = await prisma.cliente.update({
       where: { id: Number(id) },
-      data: { nombre, telefono, email, direccion },
+      data: { nombre, telefono, email, direccion, cedula },
     });
     res.json(cliente);
   } catch (err) {
