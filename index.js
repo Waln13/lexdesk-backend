@@ -36,16 +36,7 @@ app.get("/", (req, res) => {
   res.json({ message: "LexDesk API funcionando ✅" });
 });
 
-app.get("/fix-db", async (req, res) => {
-  const prisma = require("./src/utils/prisma");
-  try {
-    await prisma.$queryRaw`ALTER TABLE "Caso" ADD COLUMN IF NOT EXISTS "numeroExpediente" TEXT UNIQUE`;
-    await prisma.$queryRaw`ALTER TABLE "Cliente" ADD COLUMN IF NOT EXISTS "cedula" TEXT UNIQUE`;
-    res.json({ message: "BD actualizada ✅" });
-  } catch (err) {
-    res.json({ message: "Error", error: err.message });
-  }
-});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
